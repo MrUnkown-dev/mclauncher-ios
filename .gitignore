@@ -1,0 +1,18 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcworkspace/xcuserdata/
+MCLauncher.xcodeproj/
+
+# macOS
+.DS_Store
+
+# The prebuilt runtime is added by the user, never committed.
+native-runtime/Frameworks/
+
+# Signing material
+*.mobileprovision
+*.p12
+*.cer
