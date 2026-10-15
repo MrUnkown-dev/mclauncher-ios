@@ -1,0 +1,89 @@
+# XcodeGen project spec — generate the .xcodeproj with:  xcodegen generate
+# Docs: https://github.com/yonaskolb/XcodeGen/blob/master/Docs/ProjectSpec.md
+name: MCLauncher
+
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.9"
+    IPHONEOS_DEPLOYMENT_TARGET: "18.0"
+    ENABLE_BITCODE: NO
+    CLANG_ENABLE_MODULES: YES
+    CLANG_ENABLE_OBJC_ARC: YES
+    ALWAYS_SEARCH_USER_PATHS: NO
+    # Keep the binary small — "lightweight" launcher shell.
+    SWIFT_OPTIMIZATION_LEVEL: "-Osize"
+    GCC_OPTIMIZATION_LEVEL: "s"
+    DEAD_CODE_STRIPPING: YES
+    STRIP_INSTALLED_PRODUCT: YES
+    # The JRE ships unsigned dylibs; don't let the toolchain strip/reject them.
+    CODE_SIGNING_ALLOWED: YES
+    CODE_SIGNING_REQUIRED: YES
+
+targets:
+  MCLauncher:
+    type: application
+    platform: iOS
+    deploymentTarget: "18.0"
+    sources:
+      - path: MCLauncher
+        excludes:
+          - "Info.plist"
+          - "MCLauncher.entitlements"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.mclauncher
+        PRODUCT_NAME: MCLauncher
+        INFOPLIST_FILE: MCLauncher/Info.plist
+        CODE_SIGN_ENTITLEMENTS: MCLauncher/MCLauncher.entitlements
+        SWIFT_OBJC_BRIDGING_HEADER: MCLauncher/Native/MCLauncher-Bridging-Header.h
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTS_MACCATALYST: NO
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
+        # Frameworks the launcher links against.
+        LD_RUNPATH_SEARCH_PATHS:
+          - "$(inherited)"
+          - "@executable_path/Frameworks"
+        OTHER_LDFLAGS:
+          - "$(inherited)"
+          - "-lz"
+          - "-lobjc"
+          - "-framework"
+          - "Foundation"
+          - "-framework"
+          - "UIKit"
+          - "-framework"
+          - "GameController"
+          - "-framework"
+          - "Metal"
+          - "-framework"
+          - "AVFoundation"
+    # When you drop the runtime in, uncomment the block below and delete the
+    # stub target's "Native" folder handling. See BUILD.md → "Adding the JRE".
+    # dependencies:
+    #   - framework: native-runtime/libjvm_launcher.dylib
+    #     embed: true
+    #     codeSign: false
+    #   - framework: native-runtime/libgl4es.dylib
+    #     embed: true
+    #     codeSign: false
+
+schemes:
+  MCLauncher:
+    build:
+      targets:
+        MCLauncher: all
+    run:
+      config: Debug
+    archive:
+      config: Release
